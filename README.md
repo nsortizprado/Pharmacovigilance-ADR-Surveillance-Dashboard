@@ -5,6 +5,13 @@ This project presents an end-to-end Pharmacovigilance Adverse Event Reporting Sy
 
 ---
 
+## Tools & Technologies
+- **Database Engine:** SQLite / PostgreSQL (DDL Scripts, Indexing, Data Normalization, `CASE WHEN` Entity Mapping)
+- **Data Visualization & Analytics:** Power BI, DAX (Data Analysis Expressions), Relational Data Modeling (1-to-Many Star Schema)
+- **Domain Standards:** Pharmacovigilance, Adverse Event Reporting (ADR), MedDRA Reactions, Patient Demographics
+
+---
+
 ## Key Safety Findings
 - **Total Case Volume:** 1,000,000 unique adverse event reports analyzed.
 - **Serious Outcome Baseline:** 5.00% baseline rate for severe or fatal outcomes across all reported events.
@@ -44,3 +51,15 @@ This project presents an end-to-end Pharmacovigilance Adverse Event Reporting Sy
 - **Outcome Severity Breakdown:** Donut chart categorizing reports by severity.
 - **Demographic Distribution:** Clustered column chart comparing age groups and gender distribution.
 - **Interactive Slicers:** Dropdown filters for Drug Name, Gender, and Age Group.
+
+---
+
+### Key SQL Transformation Snippet
+```sql
+-- Standardize Drug Names (Brand to Generic Mapping)
+UPDATE Dim_Drugs
+SET drug_name = CASE 
+    WHEN drug_name IN ('Ozempic', 'Wegovy') THEN 'Semaglutide'
+    WHEN drug_name = 'Glucophage' THEN 'Metformin'
+    ELSE drug_name
+END;
