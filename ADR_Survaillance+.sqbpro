@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="ADR_Survaillance+.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="0"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3423"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="Dim_Drugs" custom_title="0" dock_id="1" table="4,9:mainDim_Drugs"/><dock_state state="000000ff00000000fd00000001000000020000000000000000fc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000ffffffff0000011300ffffff000000000000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1*">
+ALTER TABLE Dim_Patients ADD COLUMN age_group VARCHAR(20);
+
+UPDATE Dim_Patients 
+SET age_group = CASE 
+    WHEN patient_age &lt; 18 THEN 'Pediatric (&lt;18)'
+    WHEN patient_age BETWEEN 18 AND 44 THEN 'Adult (18-44)'
+    WHEN patient_age BETWEEN 45 AND 64 THEN 'Middle Aged (45-64)'
+    WHEN patient_age &gt;= 65 THEN 'Elderly (65+)'
+    ELSE 'Unknown'
+END;</sql><current_tab id="0"/></tab_sql></sqlb_project>
