@@ -34,13 +34,13 @@ This project presents an end-to-end Pharmacovigilance Adverse Event Reporting Sy
 ## Dashboard Visualizations
 
 ### Page 1: Executive Summary
-![Executive Summary Page](ADR_Survaillance_SS/page1_executive_summary.png)
+![Executive Summary Page](ADR_Surveillance_SS/page1_executive_summary.png)
 - **KPI Header:** Tracks total reported cases, serious outcome percentage, and top suspect drug case count.
 - **Adverse Event Volume Over Time:** Line chart evaluating chronological report volume.
 - **Top 10 MedDRA Side Effects:** Horizontal bar chart highlighting the top 10 reaction codes.
 
 ### Page 2: Demographic & Outcome Breakdown
-![Demographics Page](ADR_Survaillance_SS/page2_demographics.png)
+![Demographics Page](ADR_Surveillance_SS/page2_demographics.png)
 - **Outcome Severity Breakdown:** Donut chart categorizing reports by severity.
 - **Demographic Distribution:** Clustered column chart comparing age groups and gender distribution.
 - **Interactive Slicers:** Dropdown filters for Drug Name, Gender, and Age Group.
