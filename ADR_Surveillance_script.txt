@@ -1,0 +1,128 @@
+Project 1
+
+-- =====================================================================
+-- Project 1: Post-Market Safety & ADR Surveillance Analytics (FDA FAERS)
+-- Description: Standardizes raw FAERS safety report data, performs ETL 
+--              transformations, maps MedDRA reaction terms, and builds 
+--              a normalized Star Schema architecture.
+-- =====================================================================
+
+-- ---------------------------------------------------------------------
+-- Step 0: Data Ingestion & Database Inspection
+-- ---------------------------------------------------------------------
+PRAGMA table_info(raw_adr_data);
+
+-- ---------------------------------------------------------------------
+-- Step 1: Create Dimension Table - Patients (`Dim_Patients`)
+-- Feature: Categorizes Patient Age into Standard Clinical Groups
+-- ---------------------------------------------------------------------
+DROP TABLE IF EXISTS Dim_Patients;
+
+CREATE TABLE Dim_Patients AS
+SELECT DISTINCT
+    ROW_NUMBER() OVER (ORDER BY PatientAge, Gender) AS patient_id,
+    PatientAge AS patient_age,
+    COALESCE(Gender, 'Other/Unknown') AS gender,
+    CASE 
+        WHEN PatientAge < 18 THEN 'Pediatric (<18)'
+        WHEN PatientAge BETWEEN 18 AND 44 THEN 'Adult (18-44)'
+        WHEN PatientAge BETWEEN 45 AND 64 THEN 'Middle Aged (45-64)'
+        WHEN PatientAge >= 65 THEN 'Elderly (65+)'
+        ELSE 'Unknown'
+    END AS age_group
+FROM raw_adr_data;
+
+-- ---------------------------------------------------------------------
+-- Step 2: Create Dimension Table - Drugs (`Dim_Drugs`)
+-- Feature: Standardizes Suspect Drug Names and Concomitant Therapies
+-- ---------------------------------------------------------------------
+DROP TABLE IF EXISTS Dim_Drugs;
+
+CREATE TABLE Dim_Drugs AS
+SELECT DISTINCT
+    ROW_NUMBER() OVER (ORDER BY DrugName) AS drug_id,
+    TRIM(DrugName) AS drug_name,
+    COALESCE(TRIM(ConcomitantDrugs), 'None') AS concomitant_drugs
+FROM raw_adr_data;
+
+-- ---------------------------------------------------------------------
+-- Step 3: Create Dimension Table - Events (`Dim_Events`)
+-- Feature: Retains `adr_code`, adds `adr_term` for MedDRA clinical names
+-- ---------------------------------------------------------------------
+DROP TABLE IF EXISTS Dim_Events;
+
+CREATE TABLE Dim_Events AS
+SELECT DISTINCT
+    ROW_NUMBER() OVER (ORDER BY ADR_Code, Seriousness) AS event_id,
+    ADR_Code AS adr_code,
+    -- Added adr_term column alongside adr_code
+    CASE CAST(ADR_Code AS TEXT)
+        WHEN '10037844' THEN 'Rash / Skin Eruption'
+        WHEN '10000081' THEN 'Abdominal Pain'
+        WHEN '10037660' THEN 'Pyrexia (Fever)'
+        WHEN '10021097' THEN 'Hypotension (Low BP)'
+        WHEN '10013968' THEN 'Dyspnea (Shortness of Breath)'
+        WHEN '10002198' THEN 'Anaphylactic Reaction'
+        WHEN '10047700' THEN 'Arrhythmia / Palpitations'
+        WHEN '10028813' THEN 'Nausea & Vomiting'
+        WHEN '10013573' THEN 'Dizziness / Vertigo'
+        WHEN '10016256' THEN 'Fatigue / Asthenia'
+        WHEN '10019211' THEN 'Headache'
+        WHEN '10012735' THEN 'Diarrhea'
+        ELSE 'Other Adverse Reaction'
+    END AS adr_term,
+    LOWER(TRIM(Seriousness)) AS seriousness
+FROM raw_adr_data;
+
+-- ---------------------------------------------------------------------
+-- Step 4: Create Central Fact Table (`Fact_ADR_Reports`)
+-- Feature: Connects Fact Records to Dimension Tables via Foreign Keys
+-- ---------------------------------------------------------------------
+DROP TABLE IF EXISTS Fact_ADR_Reports;
+
+CREATE TABLE Fact_ADR_Reports AS
+SELECT 
+    r.ReportID AS report_id,
+    r.ReportID AS fact_id,
+    p.patient_id,
+    d.drug_id,
+    e.event_id,
+    r.Dosage AS dosage,
+    r.DurationDays AS duration_days,
+    r.OnsetDays AS onset_days,
+JOIN Dim_Patients p 
+    ON r.PatientAge = p.patient_age 
+   AND COALESCE(r.Gender, 'Other/Unknown') = p.gender
+JOIN Dim_Drugs d 
+    ON TRIM(r.DrugName) = d.drug_name
+JOIN Dim_Events e 
+    ON r.ADR_Code = e.adr_code 
+   AND LOWER(TRIM(r.Seriousness)) = e.seriousness;
+
+-- ---------------------------------------------------------------------
+-- Step 5: Operational Safety Queries
+-- ---------------------------------------------------------------------
+
+-- Query 1: Top 10 Most Frequent Adverse Reaction Terms
+SELECT 
+    e.adr_term,
+    e.adr_code,
+    COUNT(f.report_id) AS total_cases,
+    ROUND(COUNT(f.report_id) * 100.0 / (SELECT COUNT(*) FROM Fact_ADR_Reports), 2) AS percentage_share
+FROM Fact_ADR_Reports f
+JOIN Dim_Events e ON f.event_id = e.event_id
+GROUP BY e.adr_term, e.adr_code
+ORDER BY total_cases DESC
+LIMIT 10;
+
+-- Query 2: Serious Outcome Distribution by Drug
+SELECT 
+    d.drug_name,
+    COUNT(f.report_id) AS total_reports,
+    SUM(CASE WHEN e.seriousness IN ('severe', 'fatal') THEN 1 ELSE 0 END) AS serious_cases,
+    ROUND(SUM(CASE WHEN e.seriousness IN ('severe', 'fatal') THEN 1 ELSE 0 END) * 100.0 / COUNT(f.report_id), 2) AS serious_rate_pct
+FROM Fact_ADR_Reports f
+JOIN Dim_Drugs d ON f.drug_id = d.drug_id
+JOIN Dim_Events e ON f.event_id = e.event_id
+GROUP BY d.drug_name
+ORDER BY total_reports DESC;
