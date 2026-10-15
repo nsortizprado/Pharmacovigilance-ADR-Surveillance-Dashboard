@@ -88,19 +88,19 @@ The complete, reproducible ETL script is available in the repository root file:
 
 1. **Clone or Download the Repository:** Download or clone this project repository to your local computer.
 2. **Database & SQL Pipeline:**
-  - Open DB Browser for SQLite.
-  - Inspect the SQL script in `ADR_Surveillance_script.txt` or review the processed CSV datasets inside the `Data/` folder.
+  - Unzip `raw_adr_data.zip` and `Fact_ADR_Reports.zip` inside the `Data/` directory.
+   - Inspect the SQL script in [`ADR_Surveillance_script.txt`](ADR_Surveillance_script.txt) or review the processed CSV datasets.
 3. **Explore the Power BI Dashboard:**
-  - Open the `ADR_Surveillance.pbix` file in Power BI Desktop.
-  - Re-bind data source path if prompted to local CSV or database files.
+  - Open the `ADR_Surveillance.pbit` template file in Power BI Desktop.
+  - When prompted, load or re-bind the data source path to your local CSV directory or SQLite database.
 
 ---
 
 ## 📁 Repository Structure
 ```text
 ├── Data/
-│   ├── raw_adr_data.csv               # Raw Safety Registry Dataset
-│   ├── Fact_ADR_Reports.csv           # Central Fact Table
+│   ├── raw_adr_data.zip               # Raw Safety Registry Dataset
+│   ├── Fact_ADR_Reports.zip           # Central Fact Table
 │   ├── Dim_Patients.csv               # Patient Demographic Dimension
 │   ├── Dim_Drugs.csv                  # Drug Name Dimension
 │   └── Dim_Events.csv                 # MedDRA Event Dimension
@@ -108,6 +108,6 @@ The complete, reproducible ETL script is available in the repository root file:
 │   ├── Page1_Executive_Summary.png    # Page 1 Visual Capture
 │   └── Page2_Demographics.png         # Page 2 Visual Capture
 ├── ADR_Surveillance_script.txt        # Complete SQL Pipeline Script
-├── ADR_Surveillance.pbix              # Interactive Power BI Report
+├── ADR_Surveillance.pbit              # Interactive Power BI Report
 └── README.md                          # Executive Documentation
 ```
