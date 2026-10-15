@@ -1,0 +1,49 @@
+event_id,adr_code,seriousness,adr_term
+1,10000081,fatal,Abdominal Pain
+2,10000081,mild,Abdominal Pain
+3,10000081,moderate,Abdominal Pain
+4,10000081,severe,Abdominal Pain
+5,10002198,fatal,Anaphylactic Reaction
+6,10002198,mild,Anaphylactic Reaction
+7,10002198,moderate,Anaphylactic Reaction
+8,10002198,severe,Anaphylactic Reaction
+9,10012735,fatal,Diarrhea
+10,10012735,mild,Diarrhea
+11,10012735,moderate,Diarrhea
+12,10012735,severe,Diarrhea
+13,10013573,fatal,Dizziness / Vertigo
+14,10013573,mild,Dizziness / Vertigo
+15,10013573,moderate,Dizziness / Vertigo
+16,10013573,severe,Dizziness / Vertigo
+17,10013968,fatal,Dyspnea (Shortness of Breath)
+18,10013968,mild,Dyspnea (Shortness of Breath)
+19,10013968,moderate,Dyspnea (Shortness of Breath)
+20,10013968,severe,Dyspnea (Shortness of Breath)
+21,10016256,fatal,Fatigue / Asthenia
+22,10016256,mild,Fatigue / Asthenia
+23,10016256,moderate,Fatigue / Asthenia
+24,10016256,severe,Fatigue / Asthenia
+25,10019211,fatal,Headache
+26,10019211,mild,Headache
+27,10019211,moderate,Headache
+28,10019211,severe,Headache
+29,10021097,fatal,Hypotension (Low BP)
+30,10021097,mild,Hypotension (Low BP)
+31,10021097,moderate,Hypotension (Low BP)
+32,10021097,severe,Hypotension (Low BP)
+33,10028813,fatal,Nausea & Vomiting
+34,10028813,mild,Nausea & Vomiting
+35,10028813,moderate,Nausea & Vomiting
+36,10028813,severe,Nausea & Vomiting
+37,10037660,fatal,Pyrexia (Fever)
+38,10037660,mild,Pyrexia (Fever)
+39,10037660,moderate,Pyrexia (Fever)
+40,10037660,severe,Pyrexia (Fever)
+41,10037844,fatal,Rash / Skin Eruption
+42,10037844,mild,Rash / Skin Eruption
+43,10037844,moderate,Rash / Skin Eruption
+44,10037844,severe,Rash / Skin Eruption
+45,10047700,fatal,Arrhythmia / Palpitations
+46,10047700,mild,Arrhythmia / Palpitations
+47,10047700,moderate,Arrhythmia / Palpitations
+48,10047700,severe,Arrhythmia / Palpitations
